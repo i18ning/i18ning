@@ -14,6 +14,13 @@ export const SECTION_REGEXP = new RegExp(
   "gm"
 )
 
+// # variable
+export const YAML_LEFT = "---yaml"
+export const YAML_RIGHT = "---"
+export const YAML_REGEXP = new RegExp(
+  `${YAML_LEFT}[\\s\\S]*?${YAML_RIGHT}`,
+  "m"
+)
 export const VAR_LEFT = "<"
 export const VAR_RIGHT = ">"
 

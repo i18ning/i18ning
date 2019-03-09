@@ -3,7 +3,7 @@ import fs from 'fs-extra'
 import glob from 'glob'
 import path from 'path'
 
-import { TYPE_NTING } from './constants'
+import { TYPE_NTING, YAML_LEFT, YAML_REGEXP, YAML_RIGHT } from './constants'
 import LangTextModel, { getLangTextInfo } from './model/LangTextModel'
 
 export default function sync(
@@ -54,39 +54,52 @@ export default function sync(
     if ( fs.existsSync( langFile ) ) {
       const listener = ( a, b ) => {
         watchingItems.forEach( watchingItem => watchingItem.pause() )
+
+        const referring = getLangTextInfo( langFile )
+
+        // get variables map from yaml data
+        const {
+          varMap: referringVarMap,
+          sections: referringSections
+        } = referring
+
         // update other lang files
-        const current = getLangTextInfo( langFile )
         langFiles
           .filter( file => file !== langFile && fs.existsSync( file ) )
           .forEach( file => {
             const prevFileText = fs.readFileSync( file, { encoding: "utf8" } )
+
             const target = getLangTextInfo( file )
+
+            // # update yaml
+            target.updateYaml( referring )
+
             // # update sections
             // ## check if every section exist
             // ### if not, create from referring section
             // ### if exists and referring section's type is nting, update its inner text
-            current.sections.forEach( ( currentSection, index ) => {
+            referringSections.forEach( ( referringSection, index ) => {
               const targetSection = target.sections[ index ]
 
               if ( targetSection == null ) {
                 // add section
-                target.addSection( currentSection, index )
+                target.addSection( referringSection, index )
               }
               if ( targetSection != null ) {
-                target.updateSection( currentSection, index )
+                target.updateSection( referringSection, index )
               }
             } )
 
             // # remove extra sections in target
-            let indices = []
+            let extraIndices = []
             for (
-              let i = current.sections.length;
+              let i = referringSections.length;
               i <= target.sections.length - 1;
               i++
             ) {
-              indices.push( i )
+              extraIndices.push( i )
             }
-            target.removeSectionByIndices( indices )
+            target.removeSectionByIndices( extraIndices )
 
             // output file
             if ( prevFileText !== target.text ) {
@@ -101,10 +114,4 @@ export default function sync(
       watchingItems.push( watchingItem )
     }
   } )
-}
-
-function getPathFileName( filePath: string ) {
-  const name = path.basename( filePath )
-  const ext = path.extname( filePath )
-  return name.replace( new RegExp( ext ), "" )
 }

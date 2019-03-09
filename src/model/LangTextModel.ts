@@ -1,8 +1,9 @@
 import fs from 'fs'
+import yaml from 'js-yaml'
 
 import {
     BRACKET_MAP, NTING_LEFT, NTING_RIGHT, SECTION_REGEXP, TING_LEFT, TING_RIGHT, TYPE_NTING,
-    TYPE_TING
+    TYPE_TING, YAML_LEFT, YAML_REGEXP, YAML_RIGHT
 } from '../constants'
 
 class Section {
@@ -61,7 +62,10 @@ export default class LangTextModel {
         }
         if ( matchedBracket( rightBracket ) ) {
           if ( type === matchingType ) {
-            const text = sectionOuterTextToInnerText( matchingType, innerText )
+            const text =
+              type === TYPE_NTING ?
+                sectionOuterTextToInnerText( matchingType, innerText ) :
+                ""
             const section: Section = {
               type,
               innerText: text
@@ -78,6 +82,25 @@ export default class LangTextModel {
       match( TYPE_TING, TING_LEFT, TING_RIGHT )
     } )
     return res
+  }
+
+  get yamlOuterText(): string {
+    const { text } = this
+    const potentialOuterText = text.match( YAML_REGEXP ) ?
+      text.match( YAML_REGEXP )[ 0 ] :
+      ""
+    return potentialOuterText != null ? potentialOuterText : ""
+  }
+
+  get varMap(): any {
+    const yamlText = getYamlText( this.yamlOuterText )
+    if ( yamlText.length > 0 ) {
+      const data = yaml.safeLoad( yamlText )
+      if ( data != null ) {
+        return data
+      }
+    }
+    return {}
   }
 
   // add section by referring section
@@ -148,15 +171,27 @@ export default class LangTextModel {
     } )
   }
 
-  removeSectionByIndices( indices: number[] ) {
+  removeSectionByIndices( extraIndices: number[] ) {
     let replacerIndex = -1
     this.text = this.text.replace( SECTION_REGEXP, matched => {
       replacerIndex++
-      if ( indices.includes( replacerIndex ) ) {
+      if ( extraIndices.includes( replacerIndex ) ) {
         return ``
       }
       return matched
     } )
+  }
+
+  // # variable
+  updateYaml( referring: LangTextModel ) {
+    const { yamlOuterText } = referring
+    const isExisting = YAML_REGEXP.test( this.text )
+    if ( !isExisting ) {
+      this.text = `${yamlOuterText}
+${this.text}`
+      return
+    }
+    this.text = this.text.replace( YAML_REGEXP, yamlOuterText )
   }
 }
 
@@ -183,4 +218,11 @@ export function sectionOuterTextToInnerText( type: string, outerText: string ) {
   return outerText
     .replace( new RegExp( `^\\${LEFT}`, "m" ), "" )
     .replace( new RegExp( `\\${RIGHT}$`, "m" ), "" )
+}
+
+function getYamlText( outerText: string ) {
+  return outerText
+    .replace( new RegExp( `^${YAML_LEFT}` ), "" )
+    .replace( new RegExp( `${YAML_RIGHT}$` ), "" )
+    .trim()
 }
