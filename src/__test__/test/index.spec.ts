@@ -12,7 +12,7 @@ describe( "long asynchronous specs", function() {
   it( "takes a long time", function( done ) {
     const source = path.resolve( __dirname, "source" )
     const output = path.resolve( __dirname, "output" )
-    sync( source, output, [ `en`, `cn` ] )
+    sync( source, output, [ `en`, `cn`, "es" ] )
     expect( true ).toBe( true )
   } )
 

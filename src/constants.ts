@@ -15,14 +15,15 @@ export const SECTION_REGEXP = new RegExp(
 )
 
 // # variable
-export const YAML_LEFT = "---yaml"
-export const YAML_RIGHT = "---"
+export const YAML_LEFT = "-yaml"
+export const YAML_RIGHT = "-"
 export const YAML_REGEXP = new RegExp(
-  `${YAML_LEFT}[\\s\\S]*?${YAML_RIGHT}`,
+  `${YAML_LEFT}[\\s\\S]*?${YAML_RIGHT}\\n`,
   "m"
 )
 export const VAR_LEFT = "<"
 export const VAR_RIGHT = ">"
+export const VAR_REGEXP = new RegExp( `\\${VAR_LEFT}\\S*?\\${VAR_RIGHT}`, "g" )
 
 export const BRACKET_MAP = {
   [ TYPE_NTING ]: {

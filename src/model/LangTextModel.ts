@@ -3,7 +3,7 @@ import yaml from 'js-yaml'
 
 import {
     BRACKET_MAP, NTING_LEFT, NTING_RIGHT, SECTION_REGEXP, TING_LEFT, TING_RIGHT, TYPE_NTING,
-    TYPE_TING, YAML_LEFT, YAML_REGEXP, YAML_RIGHT
+    TYPE_TING, VAR_LEFT, VAR_REGEXP, VAR_RIGHT, YAML_LEFT, YAML_REGEXP, YAML_RIGHT
 } from '../constants'
 
 class Section {
@@ -25,6 +25,7 @@ export default class LangTextModel {
     this.text = text
   }
 
+  // # Section
   get sections(): Section[] {
     let res: Section[] = []
 
@@ -62,10 +63,7 @@ export default class LangTextModel {
         }
         if ( matchedBracket( rightBracket ) ) {
           if ( type === matchingType ) {
-            const text =
-              type === TYPE_NTING ?
-                sectionOuterTextToInnerText( matchingType, innerText ) :
-                ""
+            const text = sectionOuterTextToInnerText( matchingType, innerText )
             const section: Section = {
               type,
               innerText: text
@@ -82,25 +80,6 @@ export default class LangTextModel {
       match( TYPE_TING, TING_LEFT, TING_RIGHT )
     } )
     return res
-  }
-
-  get yamlOuterText(): string {
-    const { text } = this
-    const potentialOuterText = text.match( YAML_REGEXP ) ?
-      text.match( YAML_REGEXP )[ 0 ] :
-      ""
-    return potentialOuterText != null ? potentialOuterText : ""
-  }
-
-  get varMap(): any {
-    const yamlText = getYamlText( this.yamlOuterText )
-    if ( yamlText.length > 0 ) {
-      const data = yaml.safeLoad( yamlText )
-      if ( data != null ) {
-        return data
-      }
-    }
-    return {}
   }
 
   // add section by referring section
@@ -158,19 +137,6 @@ export default class LangTextModel {
     }
   }
 
-  // update nting section by referring nting section
-  updateNtingSection( referringSection: Section, referringSectionIndex: number ) {
-    let replacerIndex = -1
-    this.text = this.text.replace( SECTION_REGEXP, matched => {
-      replacerIndex++
-      if ( referringSectionIndex === replacerIndex ) {
-        const outerText = getSectionOuterText( referringSection )
-        return `${outerText}`
-      }
-      return matched
-    } )
-  }
-
   removeSectionByIndices( extraIndices: number[] ) {
     let replacerIndex = -1
     this.text = this.text.replace( SECTION_REGEXP, matched => {
@@ -183,15 +149,53 @@ export default class LangTextModel {
   }
 
   // # variable
+  get yamlOuterText(): string {
+    const { text } = this
+    const potentialOuterText = text.match( YAML_REGEXP ) ?
+      text.match( YAML_REGEXP )[ 0 ] :
+      ""
+    return potentialOuterText != null ? potentialOuterText : ""
+  }
+
+  get varMap(): any {
+    const yamlText = getYamlText( this.yamlOuterText )
+    if ( yamlText.length > 0 ) {
+      const data = yaml.safeLoad( yamlText )
+      if ( data != null ) {
+        return data
+      }
+    }
+    return {}
+  }
+
   updateYaml( referring: LangTextModel ) {
     const { yamlOuterText } = referring
     const isExisting = YAML_REGEXP.test( this.text )
-    if ( !isExisting ) {
-      this.text = `${yamlOuterText}
-${this.text}`
+    if ( !isExisting && yamlOuterText !== "" ) {
+      this.text = `${yamlOuterText}${this.text}`
       return
     }
     this.text = this.text.replace( YAML_REGEXP, yamlOuterText )
+  }
+
+  // # Convert
+  get convertedText(): string {
+    return this.text
+      .replace( SECTION_REGEXP, outerText => {
+        return outerText
+          .replace( new RegExp( `^\\${NTING_LEFT}`, "m" ), "" )
+          .replace( new RegExp( `\\${NTING_RIGHT}$`, "m" ), "" )
+          .replace( new RegExp( `^\\${TING_LEFT}`, "m" ), "" )
+          .replace( new RegExp( `\\${TING_RIGHT}$`, "m" ), "" )
+      } )
+      .replace( YAML_REGEXP, "" )
+      .replace( VAR_REGEXP, outerText => {
+        const key = outerText
+          .replace( new RegExp( `^\\${VAR_LEFT}` ), "" )
+          .replace( new RegExp( `\\${VAR_RIGHT}$` ), "" )
+        const str = this.varMap[ key ]
+        return str != null ? str : ""
+      } )
   }
 }
 
@@ -223,6 +227,6 @@ export function sectionOuterTextToInnerText( type: string, outerText: string ) {
 function getYamlText( outerText: string ) {
   return outerText
     .replace( new RegExp( `^${YAML_LEFT}` ), "" )
-    .replace( new RegExp( `${YAML_RIGHT}$` ), "" )
+    .replace( new RegExp( `${YAML_RIGHT}\n$`, "m" ), "" )
     .trim()
 }
