@@ -63,7 +63,7 @@ export default function sync(
 
         const referring = getLangTextInfo( langFile, mode )
 
-        console.log( referring.convertedText )
+        // console.log( referring.convertedText )
 
         // get variables map from yaml data
         const { sections: referringSections } = referring
