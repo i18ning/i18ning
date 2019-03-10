@@ -1,3 +1,2 @@
-[水果名: ]{
-apple
-}
+fruits:
+  apple: {Apple}

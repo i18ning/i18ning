@@ -17,7 +17,7 @@
     "typescript": "^3.3.3333",
     "typescript-eslint-parser": "^22.0.0"
   },
-  "name": "sync-i18n-files",
+  "name": "i18n-syncing",
   "description": "",
   "version": "0.0.1",
   "main": "src/sync.ts",

@@ -3,13 +3,18 @@ import fs from 'fs-extra'
 import glob from 'glob'
 import path from 'path'
 
-import { TYPE_NTING, YAML_LEFT, YAML_REGEXP, YAML_RIGHT } from './constants'
+import { TYPE_NTING, TYPE_TING, YAML_LEFT, YAML_REGEXP, YAML_RIGHT } from './constants'
 import LangTextModel, { getLangTextInfo } from './model/LangTextModel'
+
+export class Config {
+  mode: string = TYPE_NTING
+}
 
 export default function sync(
   sourceFolder: string,
   outputFolder: string,
-  langs: string[] = []
+  langs: string[] = [],
+  config: Config = new Config()
 ) {
   // # check if lang files exist
   // ## if not, add lang files
@@ -49,13 +54,14 @@ export default function sync(
     }
   }
 
+  const { mode } = config
   let watchingItems: WatchingItem[] = []
   langFiles.forEach( langFile => {
     if ( fs.existsSync( langFile ) ) {
-      const listener = ( a, b ) => {
+      const listener = () => {
         watchingItems.forEach( watchingItem => watchingItem.pause() )
 
-        const referring = getLangTextInfo( langFile )
+        const referring = getLangTextInfo( langFile, mode )
 
         console.log( referring.convertedText )
 
@@ -68,37 +74,12 @@ export default function sync(
           .forEach( file => {
             const prevFileText = fs.readFileSync( file, { encoding: "utf8" } )
 
-            const target = getLangTextInfo( file )
+            const target = getLangTextInfo( file, mode )
 
-            // # update yaml
-            target.updateYaml( referring )
+            target.updateByReferring( referring )
 
-            // # update sections
-            // ## check if every section exist
-            // ### if not, create from referring section
-            // ### if exists and referring section's type is nting, update its inner text
-            referringSections.forEach( ( referringSection, index ) => {
-              const targetSection = target.sections[ index ]
-
-              if ( targetSection == null ) {
-                // add section
-                target.addSection( referringSection, index )
-              }
-              if ( targetSection != null ) {
-                target.updateSection( referringSection, index )
-              }
-            } )
-
-            // # remove extra sections in target
-            let extraIndices = []
-            for (
-              let i = referringSections.length;
-              i <= target.sections.length - 1;
-              i++
-            ) {
-              extraIndices.push( i )
-            }
-            target.removeSectionByIndices( extraIndices )
+            // // # update yaml
+            // target.updateYaml( referring )
 
             // output file
             if ( prevFileText !== target.text ) {
