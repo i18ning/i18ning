@@ -12,3 +12,7 @@ bundle.js
 
 # system
 .DS_Store
+
+# backup
+## i18n-sync backup files
+.backup

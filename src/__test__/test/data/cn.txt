@@ -2,7 +2,7 @@
 count: 123
 ---
 fruit:
-  apple: <1>Apple</1>
+  apple: <1>pingguo</1>
   banana: <2>Banana</2>
   orange: <3>Orange</3>
   count: <@count/>

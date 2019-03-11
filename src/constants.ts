@@ -101,7 +101,7 @@ export const SECTION_MAP: TYPE_SECTION_MAP = {
 export const TYPES = [ TYPE_TING, TYPE_NTING ]
 
 // # variable
-export const YAML_LEFT = "---yaml"
+export const YAML_LEFT = "---"
 export const YAML_RIGHT = "---"
 export const YAML_REGEXP = new RegExp(
   `${YAML_LEFT}[\\s\\S]*?${YAML_RIGHT}\\n`,

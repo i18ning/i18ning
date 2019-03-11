@@ -13,7 +13,7 @@ export class Config {
   backupCount?: number
 }
 
-export default function sync( langFiles: string[] = [], config: Config = {} ) {
+export default function sync( langFiles: string[], config: Config = {} ) {
   // // # check if lang files exist
   // // ## if not, add lang files
   // langFiles.forEach( langFile => {
@@ -21,6 +21,9 @@ export default function sync( langFiles: string[] = [], config: Config = {} ) {
   //     fs.writeFileSync( langFile, "", { encoding: "utf8" } )
   //   }
   // } )
+  if ( langFiles != null && langFiles.length === 0 ) {
+    return
+  }
 
   const currentConfig = {
     ...new Config(),
@@ -54,8 +57,8 @@ export default function sync( langFiles: string[] = [], config: Config = {} ) {
 
   const mode = TYPE_NTING
   let watchingItems: WatchingItem[] = []
-  langFiles.forEach( langFile => {
-    if ( fs.existsSync( langFile ) ) {
+  langFiles &&
+    langFiles.forEach( langFile => {
       const listener = () => {
         watchingItems.forEach( watchingItem => watchingItem.pause() )
 
@@ -95,6 +98,5 @@ export default function sync( langFiles: string[] = [], config: Config = {} ) {
       }
       const watchingItem = new WatchingItem( langFile, listener )
       watchingItems.push( watchingItem )
-    }
-  } )
+    } )
 }
