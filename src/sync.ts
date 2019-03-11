@@ -13,8 +13,7 @@ export class Config {
 export default function sync(
   sourceFolder: string,
   outputFolder: string,
-  langs: string[] = [],
-  config: Config = new Config()
+  langs: string[] = []
 ) {
   // # check if lang files exist
   // ## if not, add lang files
@@ -54,6 +53,7 @@ export default function sync(
     }
   }
 
+  const config = new Config()
   const { mode } = config
   let watchingItems: WatchingItem[] = []
   langFiles.forEach( langFile => {
@@ -61,12 +61,7 @@ export default function sync(
       const listener = () => {
         watchingItems.forEach( watchingItem => watchingItem.pause() )
 
-        const referring = getLangTextInfo( langFile, mode )
-
-        // console.log( referring.convertedText )
-
-        // get variables map from yaml data
-        const { sections: referringSections } = referring
+        const referring = getLangTextInfo( langFile, mode, true )
 
         // update other lang files
         langFiles
@@ -74,12 +69,14 @@ export default function sync(
           .forEach( file => {
             const prevFileText = fs.readFileSync( file, { encoding: "utf8" } )
 
-            const target = getLangTextInfo( file, mode )
+            const target = getLangTextInfo( file, mode, true )
 
             target.updateByReferring( referring )
 
             // // # update yaml
-            // target.updateYaml( referring )
+            target.updateYaml( referring )
+
+            console.log( target.convertedText )
 
             // output file
             if ( prevFileText !== target.text ) {

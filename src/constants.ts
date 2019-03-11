@@ -1,22 +1,23 @@
 // Section inner text regexp's text format
 const ID_REGEXP_TEXT = `(\\d+|\\@{0,1}\\S*)`
+const INNER_TEXT_REGEXP = "([\\s\\S]*?)"
 
 // # nting
 export const TYPE_NTING = "nting"
 
-export const NTING_LEFT_PREFIX = `<`
-export const NTING_LEFT_POSTFIX = `>`
+export const NTING_LEFT_PREFIX = `[[`
+export const NTING_LEFT_POSTFIX = `]]`
 export const NTING_LEFT_REGEXP_TEXT =
   NTING_LEFT_PREFIX + ID_REGEXP_TEXT + NTING_LEFT_POSTFIX
 
-export const NTING_RIGHT_PREFIX = `</`
-export const NTING_RIGHT_POSTFIX = `>`
+export const NTING_RIGHT_PREFIX = `[[/`
+export const NTING_RIGHT_POSTFIX = `]]`
 export const NTING_RIGHT_REGEXP_TEXT =
   NTING_RIGHT_PREFIX + ID_REGEXP_TEXT + NTING_RIGHT_POSTFIX
 
 export const NTING_REGEXP_TEXT =
   NTING_LEFT_REGEXP_TEXT +
-  "([\\s\\S]*?)" +
+  INNER_TEXT_REGEXP +
   NTING_RIGHT_PREFIX +
   "\\1" +
   NTING_RIGHT_POSTFIX
@@ -24,26 +25,32 @@ export const NTING_REGEXP_TEXT =
 // # ting
 export const TYPE_TING = "ting"
 
-export const TING_LEFT_PREFIX = `<<`
-export const TING_LEFT_POSTFIX = `>>`
+export const TING_LEFT_PREFIX = `<`
+export const TING_LEFT_POSTFIX = `>`
 export const TING_LEFT_REGEXP_TEXT =
   TING_LEFT_PREFIX + ID_REGEXP_TEXT + TING_LEFT_POSTFIX
 
-export const TING_RIGHT_PREFIX = `<</`
-export const TING_RIGHT_POSTFIX = `>>`
+export const TING_RIGHT_PREFIX = `</`
+export const TING_RIGHT_POSTFIX = `>`
 export const TING_RIGHT_REGEXP_TEXT =
   TING_RIGHT_PREFIX + ID_REGEXP_TEXT + TING_RIGHT_POSTFIX
 
 export const TING_REGEXP_TEXT =
   TING_LEFT_REGEXP_TEXT +
-  "([\\s\\S]*?)" +
+  INNER_TEXT_REGEXP +
   TING_RIGHT_PREFIX +
   "\\1" +
   TING_RIGHT_POSTFIX
 
 // # section
 export const SECTION_REGEXP = new RegExp(
-  NTING_REGEXP_TEXT + "|" + TING_REGEXP_TEXT,
+  NTING_REGEXP_TEXT +
+    "|" +
+    TING_LEFT_REGEXP_TEXT +
+    INNER_TEXT_REGEXP +
+    TING_RIGHT_PREFIX +
+    "\\2" +
+    TING_RIGHT_POSTFIX,
   "gm"
 )
 
@@ -94,12 +101,12 @@ export const SECTION_MAP: TYPE_SECTION_MAP = {
 export const TYPES = [ TYPE_TING, TYPE_NTING ]
 
 // # variable
-export const YAML_LEFT = "-yaml"
-export const YAML_RIGHT = "-"
+export const YAML_LEFT = "---yaml"
+export const YAML_RIGHT = "---"
 export const YAML_REGEXP = new RegExp(
   `${YAML_LEFT}[\\s\\S]*?${YAML_RIGHT}\\n`,
   "m"
 )
-export const VAR_LEFT = "<"
-export const VAR_RIGHT = ">"
+export const VAR_LEFT = "<@"
+export const VAR_RIGHT = "/>"
 export const VAR_REGEXP = new RegExp( `\\${VAR_LEFT}\\S*?\\${VAR_RIGHT}`, "g" )
