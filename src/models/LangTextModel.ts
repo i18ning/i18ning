@@ -96,7 +96,6 @@ export default class LangTextModel {
   updateByOriginalSections( originalSections: Section[] ) {
     const updateText = ( index: number, replacingText: string ) => {
       let replacerIndex = -1
-      console.log( SECTION_REGEXP )
       this.text = this.text.replace( SECTION_REGEXP, matched => {
         replacerIndex++
         if ( index === replacerIndex ) {

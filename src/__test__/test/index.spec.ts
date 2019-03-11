@@ -10,9 +10,14 @@ describe( "long asynchronous specs", function() {
   } )
 
   it( "takes a long time", function( done ) {
-    const source = path.resolve( __dirname, "source" )
-    const output = path.resolve( __dirname, "output" )
-    sync( source, output, [ `en`, `cn`, "es" ] )
+    const langFiles = [
+      path.resolve( __dirname, "data/en.txt" ),
+      path.resolve( __dirname, "data/cn.txt" ),
+      path.resolve( __dirname, "data/es.txt" )
+    ]
+    sync( langFiles, {
+      backup: path.resolve( __dirname, ".backup" )
+    } )
     expect( true ).toBe( true )
   } )
 
