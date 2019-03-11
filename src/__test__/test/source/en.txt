@@ -1,6 +1,8 @@
 ---yaml
-name: apple
+count: 123
 ---
-------
-
-<@name/>
+fruit:
+  apple: <1>Apple</1>
+  banana: <2>Banana</2>
+  orange: <3>Orange</3>
+  count: <@count/>

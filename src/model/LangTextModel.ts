@@ -2,8 +2,9 @@ import fs from 'fs'
 import yaml from 'js-yaml'
 
 import {
-    SECTION_MAP, SECTION_REGEXP, TYPE_NTING, TYPE_SECTION_MAP_ITEM, TYPE_TING, TYPES, VAR_LEFT,
-    VAR_REGEXP, VAR_RIGHT, YAML_LEFT, YAML_REGEXP, YAML_RIGHT
+    NTING_LEFT_REGEXP_TEXT, NTING_RIGHT_REGEXP_TEXT, SECTION_MAP, SECTION_REGEXP,
+    TING_LEFT_REGEXP_TEXT, TING_RIGHT_REGEXP_TEXT, TYPE_NTING, TYPE_SECTION_MAP_ITEM, TYPE_TING,
+    TYPES, VAR_LEFT, VAR_REGEXP, VAR_RIGHT, YAML_LEFT, YAML_REGEXP, YAML_RIGHT
 } from '../constants'
 
 export class Section {
@@ -246,10 +247,10 @@ export default class LangTextModel {
     return this.text
       .replace( SECTION_REGEXP, outerText => {
         return outerText
-        // .replace( new RegExp( `^\\${NTING_LEFT}`, "m" ), "" )
-        // .replace( new RegExp( `\\${NTING_RIGHT}$`, "m" ), "" )
-        // .replace( new RegExp( `^\\${TING_LEFT}`, "m" ), "" )
-        // .replace( new RegExp( `\\${TING_RIGHT}$`, "m" ), "" )
+          .replace( new RegExp( `^\\${NTING_LEFT_REGEXP_TEXT}`, "m" ), "" )
+          .replace( new RegExp( `\\${NTING_RIGHT_REGEXP_TEXT}$`, "m" ), "" )
+          .replace( new RegExp( `^\\${TING_LEFT_REGEXP_TEXT}`, "m" ), "" )
+          .replace( new RegExp( `\\${TING_RIGHT_REGEXP_TEXT}$`, "m" ), "" )
       } )
       .replace( YAML_REGEXP, "" )
       .replace( VAR_REGEXP, outerText => {
