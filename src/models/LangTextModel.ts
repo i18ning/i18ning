@@ -1,4 +1,3 @@
-import fs from 'fs'
 import yaml from 'js-yaml'
 
 import {
@@ -262,15 +261,6 @@ export default class LangTextModel {
   }
 }
 
-export function getLangTextInfo(
-  file: string,
-  workSpaceType: string,
-  isRoot: boolean
-) {
-  const text = fs.readFileSync( file, { encoding: "utf8" } )
-  const langTextInfo = new LangTextModel( text, workSpaceType, isRoot )
-  return langTextInfo
-}
 // # section
 // contracted method, used in multiple places
 function matchToGetSections( types: string[], targetText: string ) {

@@ -5,7 +5,7 @@ import path from 'path'
 
 import backup from './backup'
 import { TYPE_NTING, TYPE_TING, YAML_LEFT, YAML_REGEXP, YAML_RIGHT } from './constants'
-import LangTextModel, { getLangTextInfo } from './models/LangTextModel'
+import { getLangTextInfo } from './store/store'
 
 export class Config {
   backup?: string
