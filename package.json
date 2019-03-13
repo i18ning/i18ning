@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "nodemon --watch 'src/**/*' --ignore 'src/__test__/**/source/**/*' --verbose -e ts,txt --exec 'ts-node' node_modules/jasmine/bin/jasmine"
+    "start": "nodemon --watch 'src/**/*' --ignore 'src/__test__/**/data/**/*' --verbose -e ts,txt --exec 'ts-node' node_modules/jasmine/bin/jasmine"
   },
   "devDependencies": {
     "@types/fs-extra": "^5.0.5",
@@ -14,6 +14,7 @@
     "jasmine": "^3.3.1",
     "js-yaml": "^3.12.2",
     "nodemon": "^1.18.10",
+    "puppeteer": "^1.13.0",
     "trash": "^4.3.0",
     "ts-node": "^8.0.3",
     "typescript": "^3.3.3333",

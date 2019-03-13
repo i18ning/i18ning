@@ -36,12 +36,18 @@ export class Section {
   }
 
   get right(): string {
-    const { LEFT_REGEXP_TEXT }: TYPE_SECTION_MAP_ITEM = SECTION_MAP[ this.type ]
+    const { RIGHT_REGEXP_TEXT }: TYPE_SECTION_MAP_ITEM = SECTION_MAP[ this.type ]
 
-    const r = new RegExp( LEFT_REGEXP_TEXT + "$" )
+    const r = new RegExp( RIGHT_REGEXP_TEXT + "$" )
     const matched = this.outerText.match( r ) || []
 
     return matched[ 0 ]
+  }
+
+  updateInnerText( innerText: string ) {
+    this.innerText = innerText
+    const { left, right } = this
+    this.outerText = `${left}${innerText}${right}`
   }
 }
 
@@ -56,34 +62,54 @@ export default class LangTextModel {
     this.isRoot = isRoot
   }
 
-  updateByReferring( referring: LangTextModel ) {
+  updateByReferring( referring: LangTextModel, translateFn: Function ) {
     // # types are both nting
-    if (
-      this.workspaceType === TYPE_NTING &&
-      referring.workspaceType === TYPE_NTING
-    ) {
-      const clonedReferring = new LangTextModel(
-        referring.text,
-        referring.workspaceType
-      )
+    // if (
+    //   this.workspaceType === TYPE_NTING &&
+    //   referring.workspaceType === TYPE_NTING
+    // ) {
+    const clonedReferring = new LangTextModel(
+      referring.text,
+      referring.workspaceType
+    )
 
-      clonedReferring.updateByOriginalSections( this.sections )
+    let resolved = false
+    const maxWaitTime = 10000
 
-      this.text = clonedReferring.text
-    }
+    clonedReferring
+      .updateByOriginalSections( this.sections, translateFn )
+      .then( () => {
+        resolved = true
+      } )
 
-    // # types are both ting
-    if (
-      this.workspaceType === TYPE_TING &&
-      referring.workspaceType === TYPE_TING
-    ) {
-      // taking the space in case of possible supporting ting mode
-      // # update sections
-      // ## check if every section exist
-      // // ### if not, create from referring section
-      // // ### if exists and referring section's type is nting, update its inner text
-      // # remove extra sections in target
-    }
+    return new Promise( ( resolve, reject ) => {
+      let timer = setInterval( () => {
+        if ( resolved ) {
+          clearInterval( timer )
+          this.text = clonedReferring.text
+          resolve()
+        }
+      }, 100 )
+
+      setTimeout( () => {
+        clearInterval( timer )
+        reject()
+      }, maxWaitTime )
+    } )
+    // }
+
+    // // # types are both ting
+    // if (
+    //   this.workspaceType === TYPE_TING &&
+    //   referring.workspaceType === TYPE_TING
+    // ) {
+    //   // taking the space in case of possible supporting ting mode
+    //   // # update sections
+    //   // ## check if every section exist
+    //   // // ### if not, create from referring section
+    //   // // ### if exists and referring section's type is nting, update its inner text
+    //   // # remove extra sections in target
+    // }
   }
 
   // # Section
@@ -92,7 +118,10 @@ export default class LangTextModel {
     return matchToGetSections( TYPES, this.text )
   }
 
-  updateByOriginalSections( originalSections: Section[] ) {
+  async updateByOriginalSections(
+    originalSections: Section[],
+    translate: Function
+  ) {
     const updateText = ( index: number, replacingText: string ) => {
       let replacerIndex = -1
       this.text = this.text.replace( SECTION_REGEXP, matched => {
@@ -102,47 +131,23 @@ export default class LangTextModel {
         }
         return matched
       } )
-      // let res: string = ""
-      // let remainingText = this.text
-      // while ( remainingText.length > 0 ) {
-      //   let shouldContinuePreviously = false
-      //   const match = ( type: string ) => {
-      //     const { REGEXP_TEXT } = SECTION_MAP[ type ]
-      //     const matched = remainingText.match( new RegExp( REGEXP_TEXT, "m" ) )
-      //     // console.log( remainingText, REGEXP_TEXT )
-      //     if ( matched == null ) {
-      //       return
-      //     }
-
-      //     const [ outerText, id ] = matched
-
-      //     const removingRegexp = new RegExp( ".*?" + REGEXP_TEXT, "m" )
-      //     const matchedBefore = remainingText.match(
-      //       new RegExp( ".*(?=" + REGEXP_TEXT + ")", "m" )
-      //     )
-      //     if ( matchedBefore ) {
-      //       const before = matchedBefore[ 0 ]
-      //       res = res + before + ( targetId === id ? replacingText : outerText )
-      //     }
-      //     remainingText = remainingText.replace( removingRegexp, "" )
-      //     shouldContinuePreviously = true
-      //   }
-
-      //   TYPES.map( match )
-
-      //   if ( shouldContinuePreviously ) {
-      //     continue
-      //   }
-      //   res = res + remainingText.substring( 0, 1 )
-      //   remainingText = remainingText.substring( 1, remainingText.length )
-      // }
-      // this.text = res
     }
 
-    this.sections.forEach( ( currentSection, index ) => {
+    let index = -1
+    for ( const currentSection of this.sections ) {
+      index++
+
       const foundIndex = originalSections
         .map( ( { id } ) => id )
         .indexOf( currentSection.id )
+
+      if ( foundIndex === -1 ) {
+        // translate it
+        const translatedInnerText = await translate( currentSection.innerText )
+        currentSection.updateInnerText( translatedInnerText )
+        const replacingText = currentSection.outerText
+        updateText( index, replacingText )
+      }
 
       if ( foundIndex > -1 ) {
         const originalSection = originalSections[ foundIndex ]
@@ -165,7 +170,43 @@ export default class LangTextModel {
           updateText( index, replacingText )
         }
       }
-    } )
+    }
+
+    // this.sections.forEach( async ( currentSection, index ) => {
+    //   const foundIndex = originalSections
+    //     .map( ( { id } ) => id )
+    //     .indexOf( currentSection.id )
+
+    //   if ( foundIndex === -1 ) {
+    //     // translate it
+    //     const translatedInnerText = await translate( currentSection.innerText )
+    //     currentSection.updateInnerText( translatedInnerText )
+    //     const replacingText = currentSection.outerText
+    //     updateText( index, replacingText )
+    //   }
+
+    //   if ( foundIndex > -1 ) {
+    //     const originalSection = originalSections[ foundIndex ]
+    //     const typeA = currentSection.type
+    //     const typeB = originalSection.type
+
+    //     if (
+    //       ( typeA === TYPE_NTING && typeB === TYPE_NTING ) ||
+    //       ( typeA === TYPE_NTING && typeB === TYPE_TING )
+    //     ) {
+    //       const replacingText = currentSection.outerText
+    //       updateText( index, replacingText )
+    //     }
+    //     if ( typeA === TYPE_TING && typeB === TYPE_NTING ) {
+    //       const replacingText = currentSection.outerText
+    //       updateText( index, replacingText )
+    //     }
+    //     if ( typeA === TYPE_TING && typeB === TYPE_TING ) {
+    //       const replacingText = originalSection.outerText
+    //       updateText( index, replacingText )
+    //     }
+    //   }
+    // } )
   }
 
   updateSectionByOriginalSection(

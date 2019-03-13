@@ -5,7 +5,9 @@ import path from 'path'
 
 import backup from './backup'
 import { TYPE_NTING, TYPE_TING, YAML_LEFT, YAML_REGEXP, YAML_RIGHT } from './constants'
+import PuppeteerModel from './models/PuppeteerModel'
 import { getLangTextInfo } from './store/store'
+import translate from './translate'
 
 export class Config {
   backup?: string
@@ -57,6 +59,13 @@ export default function sync( langFiles: string[], config: Config = {} ) {
 
   const mode = TYPE_NTING
   let watchingItems: WatchingItem[] = []
+
+  const puppeteerModel = new PuppeteerModel()
+
+  puppeteerModel.init()
+  const translateFn = text => translate( puppeteerModel, text )
+  let isTranslating = false
+
   langFiles &&
     langFiles.forEach( langFile => {
       const listener = () => {
@@ -72,17 +81,19 @@ export default function sync( langFiles: string[], config: Config = {} ) {
 
             const target = getLangTextInfo( file, mode, true )
 
-            target.updateByReferring( referring )
+            isTranslating = true
+            target.updateByReferring( referring, translateFn ).then( () => {
+              isTranslating = false
+              // // # update yaml
+              target.updateYaml( referring )
 
-            // // # update yaml
-            target.updateYaml( referring )
+              // console.log( target.convertedText )
 
-            // console.log( target.convertedText )
-
-            // output file
-            if ( prevFileText !== target.text ) {
-              fs.outputFileSync( file, target.text, { encoding: "utf8" } )
-            }
+              // output file
+              if ( prevFileText !== target.text ) {
+                fs.outputFileSync( file, target.text, { encoding: "utf8" } )
+              }
+            } )
           } )
 
         // # backup

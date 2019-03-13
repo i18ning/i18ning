@@ -1,8 +1,8 @@
----yaml
-count: 123
----
-fruit:
-  apple: <1>pingguo</1>
-  banana: <2>Banana</2>
-  orange: <3>Orange</3>
-  count: <@count/>
+<1>
+After learning common sorting algorithms, feel like demonstrating them using not only brief description but also animated demos.
+</1>
+
+
+<2>Here contains 6 sorting algorithms, half are simple, half are advanced.</2>
+
+<3>So, how about your power of translating English?</3>
