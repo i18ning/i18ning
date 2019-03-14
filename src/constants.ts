@@ -1,6 +1,7 @@
 // Section inner text regexp's text format
 const ID_REGEXP_TEXT = `(\\d+|\\@{0,1}\\S*?)`
 export const INNER_TEXT_REGEXP_TEXT = "([\\s\\S]*?)"
+export const NO_PRECEDING_BLACKSPLASH_REGEXP_TEXT = "(?<!\\\\)"
 
 // # nting
 export const TYPE_NTING = "nting"
@@ -8,12 +9,18 @@ export const TYPE_NTING = "nting"
 export const NTING_LEFT_PREFIX = `[[`
 export const NTING_LEFT_POSTFIX = `]]`
 export const NTING_LEFT_REGEXP_TEXT =
-  NTING_LEFT_PREFIX + ID_REGEXP_TEXT + NTING_LEFT_POSTFIX
+  NO_PRECEDING_BLACKSPLASH_REGEXP_TEXT +
+  NTING_LEFT_PREFIX +
+  ID_REGEXP_TEXT +
+  NTING_LEFT_POSTFIX
 
 export const NTING_RIGHT_PREFIX = `[[/`
 export const NTING_RIGHT_POSTFIX = `]]`
 export const NTING_RIGHT_REGEXP_TEXT =
-  NTING_RIGHT_PREFIX + ID_REGEXP_TEXT + NTING_RIGHT_POSTFIX
+  NO_PRECEDING_BLACKSPLASH_REGEXP_TEXT +
+  NTING_RIGHT_PREFIX +
+  ID_REGEXP_TEXT +
+  NTING_RIGHT_POSTFIX
 
 export const NTING_REGEXP_TEXT =
   NTING_LEFT_REGEXP_TEXT +
@@ -28,12 +35,18 @@ export const TYPE_TING = "ting"
 export const TING_LEFT_PREFIX = `<`
 export const TING_LEFT_POSTFIX = `>`
 export const TING_LEFT_REGEXP_TEXT =
-  TING_LEFT_PREFIX + ID_REGEXP_TEXT + TING_LEFT_POSTFIX
+  NO_PRECEDING_BLACKSPLASH_REGEXP_TEXT +
+  TING_LEFT_PREFIX +
+  ID_REGEXP_TEXT +
+  TING_LEFT_POSTFIX
 
 export const TING_RIGHT_PREFIX = `</`
 export const TING_RIGHT_POSTFIX = `>`
 export const TING_RIGHT_REGEXP_TEXT =
-  TING_RIGHT_PREFIX + ID_REGEXP_TEXT + TING_RIGHT_POSTFIX
+  NO_PRECEDING_BLACKSPLASH_REGEXP_TEXT +
+  TING_RIGHT_PREFIX +
+  ID_REGEXP_TEXT +
+  TING_RIGHT_POSTFIX
 
 export const TING_REGEXP_TEXT =
   TING_LEFT_REGEXP_TEXT +
@@ -44,12 +57,10 @@ export const TING_REGEXP_TEXT =
 
 // # section
 export const SECTION_REGEXP = new RegExp(
-  NTING_REGEXP_TEXT +
-    "|" +
-    TING_LEFT_REGEXP_TEXT +
+  TING_LEFT_REGEXP_TEXT +
     INNER_TEXT_REGEXP_TEXT +
     TING_RIGHT_PREFIX +
-    "\\2" +
+    "\\1" +
     TING_RIGHT_POSTFIX,
   "gm"
 )
@@ -102,7 +113,7 @@ export const TYPES = [ TYPE_TING, TYPE_NTING ]
 
 // # placeholder section
 export const TYPE_PLACEHOLDER_TING = "placeholder-ting"
-export const PLACEHOLDER_TING_REGEXP_TEXT = "`"
+export const PLACEHOLDER_TING_REGEXP_TEXT = "<>"
 
 // # variable
 export const YAML_LEFT = "---i18n"

@@ -1,1 +1,7 @@
-<0>so, can you tell me something about translation?</0>
+\<> 123 \<>
+
+<0>Test</0>
+
+<1>Temporary</1>
+
+\<2>哈哈\<2>

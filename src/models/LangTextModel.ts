@@ -1,11 +1,11 @@
 import yaml from 'js-yaml'
 
 import {
-    INNER_TEXT_REGEXP_TEXT, NTING_LEFT_REGEXP_TEXT, NTING_RIGHT_REGEXP_TEXT,
-    PLACEHOLDER_TING_REGEXP_TEXT, SECTION_MAP, SECTION_REGEXP, TING_LEFT_POSTFIX, TING_LEFT_PREFIX,
-    TING_LEFT_REGEXP_TEXT, TING_RIGHT_POSTFIX, TING_RIGHT_PREFIX, TING_RIGHT_REGEXP_TEXT,
-    TYPE_NTING, TYPE_SECTION_MAP_ITEM, TYPE_TING, TYPES, VAR_LEFT, VAR_REGEXP, VAR_RIGHT, YAML_LEFT,
-    YAML_REGEXP, YAML_RIGHT
+    INNER_TEXT_REGEXP_TEXT, NO_PRECEDING_BLACKSPLASH_REGEXP_TEXT, NTING_LEFT_REGEXP_TEXT,
+    NTING_RIGHT_REGEXP_TEXT, PLACEHOLDER_TING_REGEXP_TEXT, SECTION_MAP, SECTION_REGEXP,
+    TING_LEFT_POSTFIX, TING_LEFT_PREFIX, TING_LEFT_REGEXP_TEXT, TING_RIGHT_POSTFIX,
+    TING_RIGHT_PREFIX, TING_RIGHT_REGEXP_TEXT, TYPE_NTING, TYPE_SECTION_MAP_ITEM, TYPE_TING, TYPES,
+    VAR_LEFT, VAR_REGEXP, VAR_RIGHT, YAML_LEFT, YAML_REGEXP, YAML_RIGHT
 } from '../constants'
 
 export class Section {
@@ -175,13 +175,19 @@ export default class LangTextModel {
   }
 
   // # placeholder section
-  get placeholderRegexpText(): string {
+  get placeholderSectionRegexpText(): string {
     const { placeholder } = this
-    return placeholder + INNER_TEXT_REGEXP_TEXT + placeholder
+    return (
+      NO_PRECEDING_BLACKSPLASH_REGEXP_TEXT +
+      placeholder +
+      INNER_TEXT_REGEXP_TEXT +
+      NO_PRECEDING_BLACKSPLASH_REGEXP_TEXT +
+      placeholder
+    )
   }
   get placeholderSections(): PlaceholderSection[] {
     const res = matchToGetPlaceholderSections(
-      this.placeholderRegexpText,
+      this.placeholderSectionRegexpText,
       this.text
     )
     return res
@@ -195,8 +201,8 @@ export default class LangTextModel {
     return `${i}`
   }
   convertPlaceholderSectionsToSections() {
-    const { placeholderRegexpText } = this
-    const regexp = new RegExp( placeholderRegexpText )
+    const { placeholderSectionRegexpText } = this
+    const regexp = new RegExp( placeholderSectionRegexpText )
 
     this.placeholderSections.forEach( placeholderSection => {
       const { innerText } = placeholderSection
