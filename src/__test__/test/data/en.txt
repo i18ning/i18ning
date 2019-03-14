@@ -1,6 +1,3 @@
-<1>
-After learning common sorting algorithms, feel like demonstrating them using not only brief description but also animated demos.
-</1>
 
 
 <2>Here contains 6 sorting algorithms, half are simple, half are advanced.</2>

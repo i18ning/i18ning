@@ -1,9 +1,10 @@
 import yaml from 'js-yaml'
 
 import {
-    NTING_LEFT_REGEXP_TEXT, NTING_RIGHT_REGEXP_TEXT, SECTION_MAP, SECTION_REGEXP,
-    TING_LEFT_REGEXP_TEXT, TING_RIGHT_REGEXP_TEXT, TYPE_NTING, TYPE_SECTION_MAP_ITEM, TYPE_TING,
-    TYPES, VAR_LEFT, VAR_REGEXP, VAR_RIGHT, YAML_LEFT, YAML_REGEXP, YAML_RIGHT
+    NTING_LEFT_REGEXP_TEXT, NTING_RIGHT_REGEXP_TEXT, PLACEHOLDER_TING_REGEXP_TEXT, SECTION_MAP,
+    SECTION_REGEXP, TING_LEFT_REGEXP_TEXT, TING_RIGHT_REGEXP_TEXT, TYPE_NTING,
+    TYPE_SECTION_MAP_ITEM, TYPE_TING, TYPES, VAR_LEFT, VAR_REGEXP, VAR_RIGHT, YAML_LEFT,
+    YAML_REGEXP, YAML_RIGHT
 } from '../constants'
 
 export class Section {
@@ -55,8 +56,14 @@ export default class LangTextModel {
   text: string
   workspaceType: string
   isRoot: boolean = false
+  placeholder: string = PLACEHOLDER_TING_REGEXP_TEXT
 
-  constructor( text: string, workspaceType: string, isRoot: boolean = false ) {
+  constructor(
+    text: string,
+    workspaceType: string,
+    isRoot: boolean = false,
+    placeholder?: string
+  ) {
     this.text = text
     this.workspaceType = workspaceType
     this.isRoot = isRoot

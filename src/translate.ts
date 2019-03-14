@@ -12,6 +12,11 @@ const engineMap = {
   youdao: {
     url           : "http://fanyi.youdao.com/",
     setTranslating: text => {
+      // # clear result
+      const output = document.getElementById( "transTarget" )
+      output.innerHTML = ""
+
+      // # set text
       ;( <any>document.getElementById( "inputOriginal" ) ).value = text
       document.getElementById( "transMachine" ).click()
     },
@@ -24,14 +29,14 @@ const engineMap = {
             clearInterval( timer )
             resolve( innerText )
           }
-        }, 33 )
+        }, 0 )
         setTimeout( () => {
           clearInterval( timer )
-          reject()
+          reject( "time out-get translated" )
         }, maxWaitTime )
       } )
     },
-    waitTime: 100
+    waitTime: 1000
   }
 }
 
@@ -39,5 +44,10 @@ export default function translate(
   puppeteerModel: PuppeteerModel,
   text: string
 ) {
-  return puppeteerModel.search( { waitTime: 1000, ...engineMap.youdao, text } )
+  return puppeteerModel.search( {
+    waitTime : 1000,
+    ...engineMap.youdao,
+    text,
+    noRefresh: true
+  } )
 }

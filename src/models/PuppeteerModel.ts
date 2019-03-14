@@ -17,7 +17,8 @@ export default class PuppeteerModel {
     setTranslating,
     getTranslated,
     waitTime,
-    text = ""
+    text = "",
+    noRefresh = false
   } ) {
     let target
     let hasGottenTarget = false
@@ -26,16 +27,17 @@ export default class PuppeteerModel {
 
     const work = async () => {
       const { page } = this
-      await page.goto( url )
+
+      if ( noRefresh && page.url() === "about:blank" ) {
+        await page.goto( url )
+      }
+
+      if ( !noRefresh ) {
+        await page.goto( url )
+      }
+
       await page.evaluateHandle( setTranslating, text )
-      // const translatedHandle: any = await Promise.resolve(
-      //   new Promise( resolve => {
-      //     setTimeout(
-      //       () => resolve( page.evaluateHandle( getTranslated ) ),
-      //       waitTime
-      //     )
-      //   } )
-      // )
+
       const translatedHandle: any = await page.evaluateHandle(
         getTranslated,
         waitTime

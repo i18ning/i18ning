@@ -13,6 +13,7 @@ export class Config {
   backup?: string
   enableBackup?: boolean = true
   backupCount?: number
+  placeholder?: string
 }
 
 export default function sync( langFiles: string[], config: Config = {} ) {
@@ -66,12 +67,13 @@ export default function sync( langFiles: string[], config: Config = {} ) {
   const translateFn = text => translate( puppeteerModel, text )
   let isTranslating = false
 
+  const { placeholder } = currentConfig
   langFiles &&
     langFiles.forEach( langFile => {
       const listener = () => {
         watchingItems.forEach( watchingItem => watchingItem.pause() )
 
-        const referring = getLangTextInfo( langFile, mode, true )
+        const referring = getLangTextInfo( langFile, mode, true, placeholder )
 
         // # update other lang files
         langFiles
@@ -79,7 +81,7 @@ export default function sync( langFiles: string[], config: Config = {} ) {
           .forEach( file => {
             const prevFileText = fs.readFileSync( file, { encoding: "utf8" } )
 
-            const target = getLangTextInfo( file, mode, true )
+            const target = getLangTextInfo( file, mode, true, placeholder )
 
             isTranslating = true
             target.updateByReferring( referring, translateFn ).then( () => {

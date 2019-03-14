@@ -42,6 +42,10 @@ export const TING_REGEXP_TEXT =
   "\\1" +
   TING_RIGHT_POSTFIX
 
+// ## tag used to generate ting automatically
+export const TYPE_PLACEHOLDER_TING = "placeholder-ting"
+export const PLACEHOLDER_TING_REGEXP_TEXT = "<@>"
+
 // # section
 export const SECTION_REGEXP = new RegExp(
   NTING_REGEXP_TEXT +
