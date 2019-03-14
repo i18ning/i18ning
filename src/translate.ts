@@ -15,8 +15,23 @@ const engineMap = {
       ;( <any>document.getElementById( "inputOriginal" ) ).value = text
       document.getElementById( "transMachine" ).click()
     },
-    getTranslated: () => document.getElementById( "transTarget" ).innerText,
-    waitTime     : 1000
+    getTranslated: maxWaitTime => {
+      return new Promise( ( resolve, reject ) => {
+        const output = document.getElementById( "transTarget" )
+        let timer = setInterval( () => {
+          const { innerText } = output
+          if ( innerText !== "" ) {
+            clearInterval( timer )
+            resolve( innerText )
+          }
+        }, 33 )
+        setTimeout( () => {
+          clearInterval( timer )
+          reject()
+        }, maxWaitTime )
+      } )
+    },
+    waitTime: 100
   }
 }
 
