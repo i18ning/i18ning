@@ -7,7 +7,7 @@ export default class PuppeteerModel {
 
   init = async function() {
     this.browser = await puppeteer.launch( {
-      headless: false
+      // headless: false
     } )
     this.page = await this.browser.newPage()
   }

@@ -1,6 +1,6 @@
 // Section inner text regexp's text format
 const ID_REGEXP_TEXT = `(\\d+|\\@{0,1}\\S*?)`
-const INNER_TEXT_REGEXP = "([\\s\\S]*?)"
+export const INNER_TEXT_REGEXP_TEXT = "([\\s\\S]*?)"
 
 // # nting
 export const TYPE_NTING = "nting"
@@ -17,7 +17,7 @@ export const NTING_RIGHT_REGEXP_TEXT =
 
 export const NTING_REGEXP_TEXT =
   NTING_LEFT_REGEXP_TEXT +
-  INNER_TEXT_REGEXP +
+  INNER_TEXT_REGEXP_TEXT +
   NTING_RIGHT_PREFIX +
   "\\1" +
   NTING_RIGHT_POSTFIX
@@ -37,21 +37,17 @@ export const TING_RIGHT_REGEXP_TEXT =
 
 export const TING_REGEXP_TEXT =
   TING_LEFT_REGEXP_TEXT +
-  INNER_TEXT_REGEXP +
+  INNER_TEXT_REGEXP_TEXT +
   TING_RIGHT_PREFIX +
   "\\1" +
   TING_RIGHT_POSTFIX
-
-// ## tag used to generate ting automatically
-export const TYPE_PLACEHOLDER_TING = "placeholder-ting"
-export const PLACEHOLDER_TING_REGEXP_TEXT = "<@>"
 
 // # section
 export const SECTION_REGEXP = new RegExp(
   NTING_REGEXP_TEXT +
     "|" +
     TING_LEFT_REGEXP_TEXT +
-    INNER_TEXT_REGEXP +
+    INNER_TEXT_REGEXP_TEXT +
     TING_RIGHT_PREFIX +
     "\\2" +
     TING_RIGHT_POSTFIX,
@@ -103,6 +99,10 @@ export const SECTION_MAP: TYPE_SECTION_MAP = {
 // can be used to justify priority of two type
 // while matching to get sections
 export const TYPES = [ TYPE_TING, TYPE_NTING ]
+
+// # placeholder section
+export const TYPE_PLACEHOLDER_TING = "placeholder-ting"
+export const PLACEHOLDER_TING_REGEXP_TEXT = "`"
 
 // # variable
 export const YAML_LEFT = "---i18n"

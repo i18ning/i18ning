@@ -74,6 +74,12 @@ export default function sync( langFiles: string[], config: Config = {} ) {
         watchingItems.forEach( watchingItem => watchingItem.pause() )
 
         const referring = getLangTextInfo( langFile, mode, true, placeholder )
+        const previousText = referring.text
+        referring.convertPlaceholderSectionsToSections()
+        const convertedText = referring.text
+        if ( previousText !== convertedText ) {
+          fs.outputFileSync( langFile, convertedText, { encoding: "utf8" } )
+        }
 
         // # update other lang files
         langFiles
@@ -81,7 +87,7 @@ export default function sync( langFiles: string[], config: Config = {} ) {
           .forEach( file => {
             const prevFileText = fs.readFileSync( file, { encoding: "utf8" } )
 
-            const target = getLangTextInfo( file, mode, true, placeholder )
+            const target = getLangTextInfo( file, mode, true )
 
             isTranslating = true
             target.updateByReferring( referring, translateFn ).then( () => {

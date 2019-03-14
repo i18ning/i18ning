@@ -6,7 +6,7 @@ export function getLangTextInfo(
   file: string,
   workSpaceType: string,
   isRoot: boolean,
-  placeholder: string
+  placeholder?: string
 ) {
   const text = fs.readFileSync( file, { encoding: "utf8" } )
   const langTextInfo = new LangTextModel(
