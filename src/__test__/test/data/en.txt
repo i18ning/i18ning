@@ -1,7 +1,5 @@
-\<> 123 \<>
-
-<0>Test</0>
-
-<1>Temporary</1>
-
-\<2>哈哈\<2>
+fruits:
+  apple: <0>Apple</0>
+  banana: <1>Banana</1>
+  orange: <2>Orange</2>
+  pineapple: <3>pineapple</3>

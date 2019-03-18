@@ -109,7 +109,7 @@ export const SECTION_MAP: TYPE_SECTION_MAP = {
 
 // can be used to justify priority of two type
 // while matching to get sections
-export const TYPES = [ TYPE_TING, TYPE_NTING ]
+export const TYPES = [ TYPE_TING ]
 
 // # placeholder section
 export const TYPE_PLACEHOLDER_TING = "placeholder-ting"
