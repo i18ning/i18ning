@@ -20,7 +20,7 @@ const engineMap = {
       ;( <any>document.getElementById( "inputOriginal" ) ).value = text
       document.getElementById( "transMachine" ).click()
     },
-    getTranslated: maxWaitTime => {
+    getTranslated: ( maxWaitTime, text ) => {
       return new Promise( ( resolve, reject ) => {
         const output = document.getElementById( "transTarget" )
         let timer = setInterval( () => {
@@ -32,7 +32,8 @@ const engineMap = {
         }, 0 )
         setTimeout( () => {
           clearInterval( timer )
-          reject( "time out-get translated" )
+          resolve( text )
+          // reject( "time out-get translated" )
         }, maxWaitTime )
       } )
     },

@@ -90,7 +90,7 @@ export default class LangTextModel {
     )
 
     let resolved = false
-    const maxWaitTime = 10000
+    const maxWaitTime = 60000
 
     clonedReferring
       .updateByOriginalSections( this.sections, translateFn )
@@ -105,7 +105,7 @@ export default class LangTextModel {
           this.text = clonedReferring.text
           resolve()
         }
-      }, 100 )
+      }, 1000 )
 
       setTimeout( () => {
         clearInterval( timer )
@@ -144,8 +144,10 @@ export default class LangTextModel {
 
       if ( foundIndex === -1 ) {
         // translate it
-        const translatedInnerText = await translate( currentSection.innerText )
-        currentSection.updateInnerText( translatedInnerText )
+        if ( currentSection.innerText.trim() !== "" ) {
+          const translatedInnerText = await translate( currentSection.innerText )
+          currentSection.updateInnerText( translatedInnerText )
+        }
         const replacingText = currentSection.outerText
         updateText( index, replacingText )
       }
@@ -249,16 +251,14 @@ export default class LangTextModel {
     return this.text
       .replace( SECTION_REGEXP, outerText => {
         return outerText
-          .replace( new RegExp( `^\\${NTING_LEFT_REGEXP_TEXT}`, "m" ), "" )
-          .replace( new RegExp( `\\${NTING_RIGHT_REGEXP_TEXT}$`, "m" ), "" )
-          .replace( new RegExp( `^\\${TING_LEFT_REGEXP_TEXT}`, "m" ), "" )
-          .replace( new RegExp( `\\${TING_RIGHT_REGEXP_TEXT}$`, "m" ), "" )
+          .replace( new RegExp( "^" + TING_LEFT_REGEXP_TEXT, "m" ), "" )
+          .replace( new RegExp( TING_RIGHT_REGEXP_TEXT + "$", "m" ), "" )
       } )
       .replace( YAML_REGEXP, "" )
       .replace( VAR_REGEXP, outerText => {
         const key = outerText
-          .replace( new RegExp( `^\\${VAR_LEFT}` ), "" )
-          .replace( new RegExp( `\\${VAR_RIGHT}$` ), "" )
+          .replace( new RegExp( `^` + VAR_LEFT ), "" )
+          .replace( new RegExp( VAR_RIGHT + `$` ), "" )
         const str = this.varMap[ key ]
         return str != null ? str : ""
       } )

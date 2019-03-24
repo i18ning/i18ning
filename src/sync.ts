@@ -14,7 +14,10 @@ export class Config {
   enableBackup?: boolean = true
   backupCount?: number
   placeholder?: string
+  puppeteerModel?: any
 }
+
+let puppeteerModel
 
 export default function sync( langFiles: string[], config: Config = {} ) {
   // // # check if lang files exist
@@ -61,9 +64,10 @@ export default function sync( langFiles: string[], config: Config = {} ) {
   const mode = TYPE_NTING
   let watchingItems: WatchingItem[] = []
 
-  const puppeteerModel = new PuppeteerModel()
+  if ( puppeteerModel == null ) {
+    puppeteerModel = new PuppeteerModel( true )
+  }
 
-  puppeteerModel.init()
   const translateFn = text => translate( puppeteerModel, text )
   let isTranslating = false
 

@@ -5,9 +5,13 @@ export default class PuppeteerModel {
   browser: any
   page: any
 
-  init = async function() {
+  constructor( headless = false ) {
+    this.init( headless )
+  }
+
+  init = async function( headless = false ) {
     this.browser = await puppeteer.launch( {
-      // headless: false
+      headless: false
     } )
     this.page = await this.browser.newPage()
   }
@@ -40,7 +44,8 @@ export default class PuppeteerModel {
 
       const translatedHandle: any = await page.evaluateHandle(
         getTranslated,
-        waitTime
+        waitTime,
+        text
       )
       const translated = await translatedHandle.jsonValue()
 
