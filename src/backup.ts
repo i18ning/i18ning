@@ -47,15 +47,17 @@ export default function(
 
     // # copy lang files into a new backup folder named with then time string
     const timeStr = formatNormalDate()
-    langfiles.forEach( langFile => {
-      const targetDir = path.resolve( directory, timeStr )
-      const targetFile = path.resolve( targetDir, path.basename( langFile ) )
+    langfiles
+      .filter( langFile => fs.existsSync( langFile ) )
+      .forEach( langFile => {
+        const targetDir = path.resolve( directory, timeStr )
+        const targetFile = path.resolve( targetDir, path.basename( langFile ) )
 
-      if ( !fs.existsSync( targetDir ) ) {
-        fs.mkdirSync( targetDir, { recursive: true } )
-      }
-      fs.copyFileSync( langFile, targetFile )
-    } )
+        if ( !fs.existsSync( targetDir ) ) {
+          fs.mkdirSync( targetDir, { recursive: true } )
+        }
+        fs.copyFileSync( langFile, targetFile )
+      } )
     return
   } catch ( e ) {
     console.log( `Backup Failed: ${e}` )

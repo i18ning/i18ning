@@ -7,6 +7,7 @@ import {
     TING_RIGHT_PREFIX, TING_RIGHT_REGEXP_TEXT, TYPE_NTING, TYPE_SECTION_MAP_ITEM, TYPE_TING, TYPES,
     VAR_LEFT, VAR_REGEXP, VAR_RIGHT, YAML_LEFT, YAML_REGEXP, YAML_RIGHT
 } from '../constants'
+import { Config } from '../sync'
 
 export class Section {
   // # Type: 'nting' | 'ting'
@@ -67,12 +68,14 @@ export default class LangTextModel {
   workspaceType: string
   isRoot: boolean = false
   placeholder: string = PLACEHOLDER_TING_REGEXP_TEXT
+  syncConfig: Config
 
   constructor(
     text: string,
     workspaceType: string = TYPE_NTING,
     isRoot: boolean = false,
-    placeholder?: string
+    placeholder?: string,
+    syncConfig?: Config
   ) {
     this.text = text
     this.workspaceType = workspaceType
@@ -80,13 +83,17 @@ export default class LangTextModel {
     if ( placeholder != null ) {
       this.placeholder = placeholder
     }
+    this.syncConfig = syncConfig
   }
 
   updateByReferring( referring: LangTextModel, translateFn: Function ) {
     // # confirmd: types are both nting
     const clonedReferring = new LangTextModel(
       referring.text,
-      referring.workspaceType
+      referring.workspaceType,
+      false,
+      null,
+      this.syncConfig
     )
 
     let resolved = false
@@ -105,7 +112,7 @@ export default class LangTextModel {
           this.text = clonedReferring.text
           resolve()
         }
-      }, 1000 )
+      }, 0 )
 
       setTimeout( () => {
         clearInterval( timer )
@@ -144,7 +151,11 @@ export default class LangTextModel {
 
       if ( foundIndex === -1 ) {
         // translate it
-        if ( currentSection.innerText.trim() !== "" ) {
+        if (
+          this.syncConfig.enableTranslation &&
+          this.localEnableTranslation &&
+          currentSection.innerText.trim() !== ""
+        ) {
           const translatedInnerText = await translate( currentSection.innerText )
           currentSection.updateInnerText( translatedInnerText )
         }
@@ -232,6 +243,11 @@ export default class LangTextModel {
       }
     }
     return {}
+  }
+
+  get localEnableTranslation(): boolean {
+    const { enableTranslation = true } = this.varMap
+    return enableTranslation
   }
 
   updateYaml( referring: LangTextModel ) {

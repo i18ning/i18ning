@@ -14,7 +14,10 @@ export class Config {
   enableBackup?: boolean = true
   backupCount?: number
   placeholder?: string
+  // # translation
+  enableTranslation?: boolean = false
   puppeteerModel?: any
+  chromeHeadless?: boolean = true
 }
 
 let puppeteerModel
@@ -64,8 +67,9 @@ export default function sync( langFiles: string[], config: Config = {} ) {
   const mode = TYPE_NTING
   let watchingItems: WatchingItem[] = []
 
-  if ( puppeteerModel == null ) {
-    puppeteerModel = new PuppeteerModel( true )
+  const { enableTranslation, chromeHeadless } = currentConfig
+  if ( enableTranslation && puppeteerModel == null ) {
+    puppeteerModel = new PuppeteerModel( chromeHeadless )
   }
 
   const translateFn = text => translate( puppeteerModel, text )
@@ -77,7 +81,12 @@ export default function sync( langFiles: string[], config: Config = {} ) {
       const listener = () => {
         watchingItems.forEach( watchingItem => watchingItem.pause() )
 
-        const referring = getLangTextInfo( langFile, mode, true, placeholder )
+        const referring = getLangTextInfo( langFile, {
+          workSpaceType: mode,
+          isRoot       : true,
+          placeholder,
+          syncConfig   : currentConfig
+        } )
         const previousText = referring.text
         referring.convertPlaceholderSectionsToSections()
         const convertedText = referring.text
@@ -91,7 +100,11 @@ export default function sync( langFiles: string[], config: Config = {} ) {
           .forEach( file => {
             const prevFileText = fs.readFileSync( file, { encoding: "utf8" } )
 
-            const target = getLangTextInfo( file, mode, true )
+            const target = getLangTextInfo( file, {
+              workSpaceType: mode,
+              isRoot       : true,
+              syncConfig   : currentConfig
+            } )
 
             isTranslating = true
             target.updateByReferring( referring, translateFn ).then( () => {
@@ -111,7 +124,7 @@ export default function sync( langFiles: string[], config: Config = {} ) {
         // # backup
         const { enableBackup } = currentConfig
         if ( enableBackup ) {
-          const { backup: backupDirectory, backupCount } = config
+          const { backup: backupDirectory, backupCount } = currentConfig
           backup( langFiles, backupDirectory, backupCount )
         }
 

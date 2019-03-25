@@ -125,3 +125,6 @@ export const YAML_REGEXP = new RegExp(
 export const VAR_LEFT = "<@"
 export const VAR_RIGHT = "/>"
 export const VAR_REGEXP = new RegExp( `\\${VAR_LEFT}\\S*?\\${VAR_RIGHT}`, "g" )
+
+// # backup
+export const DEFAULT_BACKUP_NAME = ".backup"
