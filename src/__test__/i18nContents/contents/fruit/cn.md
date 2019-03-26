@@ -1,6 +1,5 @@
 ---i18n
-name: 'foo'
-
+name: foo <0>test</0>
 ---
 
 

@@ -235,7 +235,7 @@ export default class LangTextModel {
   }
 
   get varMap(): any {
-    const yamlText = getYamlText( this.yamlOuterText )
+    const yamlText = getYamlText( this.yamlOuterText, this.syncConfig )
     if ( yamlText.length > 0 ) {
       const data = yaml.safeLoad( yamlText )
       if ( data != null ) {
@@ -361,9 +361,18 @@ function matchToGetPlaceholderSections( regexpText, targetText: string ) {
 }
 
 // # variable
-function getYamlText( outerText: string ) {
-  return outerText
+function getYamlText( outerText: string, syncConfig ) {
+  const text = outerText
     .replace( new RegExp( `^${YAML_LEFT}` ), "" )
     .replace( new RegExp( `${YAML_RIGHT}\n$`, "m" ), "" )
     .trim()
+
+  const yamlLangTextModel = new LangTextModel(
+    text,
+    TYPE_NTING,
+    false,
+    PLACEHOLDER_TING_REGEXP_TEXT,
+    syncConfig
+  )
+  return yamlLangTextModel.convertedText
 }
