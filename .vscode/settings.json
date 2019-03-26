@@ -3,7 +3,7 @@
   "eslint.validate": [{ "language": "typescript", "autoFix": true }],
 
   "prettier.eslintIntegration": true,
-  "editor.formatOnSave": true,
+  // "editor.formatOnSave": true,
 
   "importSorter.generalConfiguration.sortOnBeforeSave": true,
   "importSorter.importStringConfiguration.hasSemicolon": false

@@ -118,13 +118,12 @@ export const PLACEHOLDER_TING_REGEXP_TEXT = "<>"
 // # variable
 export const YAML_LEFT = "---i18n"
 export const YAML_RIGHT = "---"
-export const YAML_REGEXP = new RegExp(
-  `${YAML_LEFT}[\\s\\S]*?${YAML_RIGHT}\\n`,
+export const YAML_REGEXP = new RegExp( NO_PRECEDING_BLACKSPLASH_REGEXP_TEXT + YAML_LEFT + `[\\s\\S]*?${YAML_RIGHT}\\n`,
   "m"
 )
 export const VAR_LEFT = "<@"
 export const VAR_RIGHT = "/>"
-export const VAR_REGEXP = new RegExp( `\\${VAR_LEFT}\\S*?\\${VAR_RIGHT}`, "g" )
+export const VAR_REGEXP = new RegExp(  NO_PRECEDING_BLACKSPLASH_REGEXP_TEXT + VAR_LEFT + `\\S*?\\${VAR_RIGHT}`, "g" )
 
 // # backup
 export const DEFAULT_BACKUP_NAME = ".backup"
