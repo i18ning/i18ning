@@ -1,6 +1,6 @@
 ---i18n
-name: foo <0>test</0>
+name: foo
 ---
-
-
 name: 123 <@name/>
+
+<title>Hello World</title>

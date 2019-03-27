@@ -1,5 +1,5 @@
 // Section inner text regexp's text format
-const ID_REGEXP_TEXT = `(\\d+|\\@{0,1}\\S*?)`
+const ID_REGEXP_TEXT = `(\\d+|\\@\\S*?)`
 export const INNER_TEXT_REGEXP_TEXT = "([\\s\\S]*?)"
 export const NO_PRECEDING_BLACKSPLASH_REGEXP_TEXT = "(?<!\\\\)"
 

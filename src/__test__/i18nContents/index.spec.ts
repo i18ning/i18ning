@@ -13,7 +13,8 @@ describe( "long asynchronous specs", function() {
     const locales = [ "en", "cn" ]
     const backupName = ".backup"
     const syncConfig = {
-      enableTranslation: true
+      enableTranslation: true,
+      chromeHeadless   : false
     }
     const source = path.resolve( __dirname, "contents" )
     const target = path.resolve( __dirname, "build-contents" )
@@ -22,7 +23,7 @@ describe( "long asynchronous specs", function() {
       locales,
       extension,
       backupName,
-      syncConfig
+      syncConfig,
     }
     i18nContents( source, target, config )
   } )
