@@ -64,7 +64,6 @@ export default function sync( langFiles: string[], config: Config = {} ) {
     }
   }
 
-  const mode = TYPE_NTING
   let watchingItems: WatchingItem[] = []
 
   const { enableTranslation, chromeHeadless } = currentConfig
@@ -82,10 +81,9 @@ export default function sync( langFiles: string[], config: Config = {} ) {
         watchingItems.forEach( watchingItem => watchingItem.pause() )
 
         const referring = getLangTextInfo( langFile, {
-          workSpaceType: mode,
-          isRoot       : true,
+          isRoot    : true,
           placeholder,
-          syncConfig   : currentConfig
+          syncConfig: currentConfig
         } )
         const previousText = referring.text
         referring.convertPlaceholderSectionsToSections()
@@ -101,9 +99,8 @@ export default function sync( langFiles: string[], config: Config = {} ) {
             const prevFileText = fs.readFileSync( file, { encoding: "utf8" } )
 
             const target = getLangTextInfo( file, {
-              workSpaceType: mode,
-              isRoot       : true,
-              syncConfig   : currentConfig
+              isRoot    : true,
+              syncConfig: currentConfig
             } )
 
             isTranslating = true
@@ -111,8 +108,6 @@ export default function sync( langFiles: string[], config: Config = {} ) {
               isTranslating = false
               // // # update yaml
               target.updateYaml( referring )
-
-              // console.log( target.convertedText )
 
               // output file
               if ( prevFileText !== target.text ) {

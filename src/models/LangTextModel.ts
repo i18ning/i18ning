@@ -1,11 +1,11 @@
 import yaml from 'js-yaml'
 
 import {
-    INNER_TEXT_REGEXP_TEXT, NO_PRECEDING_BLACKSPLASH_REGEXP_TEXT, NTING_LEFT_REGEXP_TEXT,
-    NTING_RIGHT_REGEXP_TEXT, PLACEHOLDER_TING_REGEXP_TEXT, SECTION_MAP, SECTION_REGEXP,
-    TING_LEFT_POSTFIX, TING_LEFT_PREFIX, TING_LEFT_REGEXP_TEXT, TING_RIGHT_POSTFIX,
-    TING_RIGHT_PREFIX, TING_RIGHT_REGEXP_TEXT, TYPE_NTING, TYPE_SECTION_MAP_ITEM, TYPE_TING, TYPES,
-    VAR_LEFT, VAR_REGEXP, VAR_RIGHT, YAML_LEFT, YAML_REGEXP, YAML_RIGHT
+    INNER_TEXT_REGEXP_TEXT, NO_PRECEDING_BLACKSPLASH_REGEXP_TEXT, PLACEHOLDER_TING_REGEXP_TEXT,
+    SECTION_MAP, SECTION_REGEXP, TING_LEFT_POSTFIX, TING_LEFT_PREFIX, TING_LEFT_REGEXP_TEXT,
+    TING_RIGHT_POSTFIX, TING_RIGHT_PREFIX, TING_RIGHT_REGEXP_TEXT, TYPE_NTING,
+    TYPE_SECTION_MAP_ITEM, TYPE_TING, TYPES, VAR_LEFT, VAR_REGEXP, VAR_RIGHT, YAML_LEFT,
+    YAML_REGEXP, YAML_RIGHT
 } from '../constants'
 import { Config } from '../sync'
 
@@ -63,37 +63,51 @@ export class PlaceholderSection {
   }
 }
 
-export default class LangTextModel {
-  text: string
-  workspaceType: string
+export class LangTextModelConfig {
   isRoot: boolean = false
   placeholder: string = PLACEHOLDER_TING_REGEXP_TEXT
-  syncConfig: Config
+  enableTranslation: boolean = false
+} 
+export default class LangTextModel {
+  text: string
+  isRoot: boolean
+  placeholder: string
+  enableTranslation?: boolean
 
   constructor(
     text: string,
-    workspaceType: string = TYPE_NTING,
-    isRoot: boolean = false,
-    placeholder?: string,
-    syncConfig?: Config
+    config?: LangTextModelConfig,
   ) {
-    this.text = text
-    this.workspaceType = workspaceType
-    this.isRoot = isRoot
-    if ( placeholder != null ) {
-      this.placeholder = placeholder
+    const { defaultConfig } = this
+    config = {
+      ...defaultConfig,
+      ...( config || {} )
     }
-    this.syncConfig = syncConfig
+    this.text = text
+    this.isRoot = config.isRoot !== undefined ? config.isRoot :  defaultConfig.isRoot
+    this.placeholder = config.placeholder !== undefined ? config.placeholder :  defaultConfig.placeholder
+    this.enableTranslation = config.enableTranslation !== undefined ? config.enableTranslation :  defaultConfig.enableTranslation
+  }
+
+  get defaultConfig(): LangTextModelConfig {
+    return new LangTextModelConfig()
+  }
+
+  get config() : LangTextModelConfig {
+    return {
+      isRoot           : this.isRoot,
+      placeholder      : this.placeholder,
+      enableTranslation: this.enableTranslation,
+    }
   }
 
   updateByReferring( referring: LangTextModel, translateFn: Function ) {
     // # confirmd: types are both nting
     const clonedReferring = new LangTextModel(
-      referring.text,
-      referring.workspaceType,
-      false,
-      null,
-      this.syncConfig
+      referring.text, {
+        ...this.config,
+        isRoot: false,
+      }
     )
 
     let resolved = false
@@ -152,7 +166,7 @@ export default class LangTextModel {
       if ( foundIndex === -1 ) {
         // translate it
         if (
-          this.syncConfig.enableTranslation &&
+          this.enableTranslation &&
           this.localEnableTranslation &&
           currentSection.innerText.trim() !== ""
         ) {
@@ -235,7 +249,7 @@ export default class LangTextModel {
   }
 
   get varMap(): any {
-    const yamlText = getYamlText( this.yamlOuterText, this.syncConfig )
+    const yamlText = getYamlText( this )
     if ( yamlText.length > 0 ) {
       const data = yaml.safeLoad( yamlText )
       if ( data != null ) {
@@ -354,25 +368,23 @@ function matchToGetPlaceholderSections( regexpText, targetText: string ) {
     remainingText = remainingText.substring( 1, remainingText.length )
   }
 
-  // console.log( res )
-  // console.log( `======` )
 
   return res
 }
 
 // # variable
-function getYamlText( outerText: string, syncConfig ) {
-  const text = outerText
+function getYamlText( model: LangTextModel ) {
+  const text = model.yamlOuterText
     .replace( new RegExp( `^${YAML_LEFT}` ), "" )
     .replace( new RegExp( `${YAML_RIGHT}\n$`, "m" ), "" )
     .trim()
 
   const yamlLangTextModel = new LangTextModel(
     text,
-    TYPE_NTING,
-    false,
-    PLACEHOLDER_TING_REGEXP_TEXT,
-    syncConfig
+    {
+      ...model.config,
+      isRoot: false,
+    }
   )
   return yamlLangTextModel.convertedText
 }

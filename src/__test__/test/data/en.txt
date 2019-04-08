@@ -3,3 +3,4 @@ enableTranslation: true
 ---
 
 <0>test</0>
+<1>apple</1>

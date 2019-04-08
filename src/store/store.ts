@@ -6,20 +6,19 @@ import { Config } from '../sync'
 export function getLangTextInfo(
   file: string,
   config: {
-    workSpaceType?: string
     isRoot?: boolean
     placeholder?: string
     syncConfig?: Config
   } = {}
 ) {
-  const { workSpaceType, isRoot, placeholder, syncConfig = {} } = config
+  const { isRoot, placeholder, syncConfig = {} } = config
   const text = fs.readFileSync( file, { encoding: "utf8" } )
   const langTextInfo = new LangTextModel(
-    text,
-    workSpaceType,
-    isRoot,
-    placeholder,
-    syncConfig
+    text, {
+      isRoot,
+      placeholder,
+      enableTranslation: syncConfig.enableTranslation
+    }
   )
   return langTextInfo
 }
