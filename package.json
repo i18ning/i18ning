@@ -1,6 +1,15 @@
 {
   "scripts": {
-    "start": "nodemon --watch 'src/**/*' --ignore 'src/__test__/**/data/**/*' --verbose -e ts,txt --exec 'ts-node' node_modules/jasmine/bin/jasmine"
+    "start": "npm run ts node_modules/jasmine/bin/jasmine",
+    "build": "npm run ts scripts/buildModel",
+    "ts": "nodemon --verbose -e ts,txt --exec 'ts-node'"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src/**/*",
+      "scripts/**/*"
+    ],
+    "ignore": "src/__test__/**/data/**/*"
   },
   "devDependencies": {
     "@types/fs-extra": "^5.0.5",
@@ -15,12 +24,18 @@
     "js-yaml": "^3.12.2",
     "nodemon": "^1.18.10",
     "puppeteer": "^1.13.0",
+    "rollup": "^1.9.0",
+    "rollup-plugin-commonjs": "^9.3.4",
+    "rollup-plugin-typescript": "^1.0.1",
     "trash": "^4.3.0",
+    "ts-loader": "^5.3.3",
     "ts-node": "^8.0.3",
-    "typescript": "^3.3.3333",
-    "typescript-eslint-parser": "^22.0.0"
+    "tslib": "^1.9.3",
+    "typescript": "^3.4.2",
+    "typescript-eslint-parser": "^22.0.0",
+    "webpack": "^4.29.6"
   },
-  "name": "i18n-syncing",
+  "name": "i18nting",
   "description": "",
   "version": "0.0.1",
   "main": "src/sync.ts",
