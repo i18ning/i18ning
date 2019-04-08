@@ -67,7 +67,7 @@ export class LangTextModelConfig {
   placeholder: string = PLACEHOLDER_TING_REGEXP_TEXT
   enableTranslation: boolean = false
 } 
-export default class LangTextModel {
+export default class TextModel {
   text: string
   isRoot: boolean
   placeholder: string
@@ -100,9 +100,9 @@ export default class LangTextModel {
     }
   }
 
-  updateByReferring( referring: LangTextModel, translateFn: Function ) {
+  updateByReferring( referring: TextModel, translateFn: Function ) {
     // # confirmd: types are both nting
-    const clonedReferring = new LangTextModel(
+    const clonedReferring = new TextModel(
       referring.text, {
         ...this.config,
         isRoot: false,
@@ -263,7 +263,7 @@ export default class LangTextModel {
     return enableTranslation
   }
 
-  updateYaml( referring: LangTextModel ) {
+  updateYaml( referring: TextModel ) {
     if ( this.isRoot ) {
       const { yamlOuterText } = referring
       const isExisting = YAML_REGEXP.test( this.text )
@@ -372,13 +372,13 @@ function matchToGetPlaceholderSections( regexpText, targetText: string ) {
 }
 
 // # variable
-function getYamlText( model: LangTextModel ) {
+function getYamlText( model: TextModel ) {
   const text = model.yamlOuterText
     .replace( new RegExp( `^${YAML_LEFT}` ), "" )
     .replace( new RegExp( `${YAML_RIGHT}\n$`, "m" ), "" )
     .trim()
 
-  const yamlLangTextModel = new LangTextModel(
+  const yamlLangTextModel = new TextModel(
     text,
     {
       ...model.config,

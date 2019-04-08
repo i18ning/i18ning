@@ -1,6 +1,6 @@
 import fs from 'fs'
 
-import LangTextModel from '../models/LangTextModel'
+import TextModel from '../models/TextModel'
 import { Config } from '../sync'
 
 export function getLangTextInfo(
@@ -13,7 +13,7 @@ export function getLangTextInfo(
 ) {
   const { isRoot, placeholder, syncConfig = {} } = config
   const text = fs.readFileSync( file, { encoding: "utf8" } )
-  const langTextInfo = new LangTextModel(
+  const langTextInfo = new TextModel(
     text, {
       isRoot,
       placeholder,
