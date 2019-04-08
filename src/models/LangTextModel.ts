@@ -7,7 +7,6 @@ import {
     TYPE_SECTION_MAP_ITEM, TYPE_TING, TYPES, VAR_LEFT, VAR_REGEXP, VAR_RIGHT, YAML_LEFT,
     YAML_REGEXP, YAML_RIGHT
 } from '../constants'
-import { Config } from '../sync'
 
 export class Section {
   // # Type: 'nting' | 'ting'
