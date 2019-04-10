@@ -16,3 +16,6 @@ bundle.js
 # backup
 ## i18n-sync backup files
 .backup
+
+# site
+i18ning.github.io

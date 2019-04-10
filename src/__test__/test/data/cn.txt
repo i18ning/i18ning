@@ -3,4 +3,3 @@ enableTranslation: true
 ---
 
 <0>测试</0>
-<1>苹果</1>

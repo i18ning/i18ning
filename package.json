@@ -23,7 +23,7 @@
     "jasmine": "^3.3.1",
     "js-yaml": "^3.12.2",
     "nodemon": "^1.18.10",
-    "puppeteer": "^1.13.0",
+    "puppeteer": "1.12.0",
     "rollup": "^1.9.0",
     "rollup-plugin-commonjs": "^9.3.4",
     "rollup-plugin-typescript": "^1.0.1",
@@ -35,9 +35,9 @@
     "typescript-eslint-parser": "^22.0.0",
     "webpack": "^4.29.6"
   },
-  "name": "i18nting",
+  "name": "i18ning",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "src/sync.ts",
   "repository": {
     "type": "git",

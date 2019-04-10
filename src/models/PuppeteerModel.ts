@@ -1,4 +1,5 @@
-const puppeteer = require( "puppeteer" )
+// const puppeteer = require( "puppeteer" )
+import puppeteer from 'puppeteer'
 
 export default class PuppeteerModel {
   maxTranslatingTime = 5000
@@ -11,7 +12,7 @@ export default class PuppeteerModel {
 
   init = async function( headless = false ) {
     this.browser = await puppeteer.launch( {
-      headless
+      headless,
     } )
     this.page = await this.browser.newPage()
   }

@@ -63,7 +63,7 @@ export class PlaceholderSection {
 }
 
 export class LangTextModelConfig {
-  isRoot: boolean = false
+  isRoot: boolean = true
   placeholder: string = PLACEHOLDER_TING_REGEXP_TEXT
   enableTranslation: boolean = false
 } 

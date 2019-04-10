@@ -7,9 +7,9 @@ describe( "long asynchronous specs", function() {
 
   // ... other codes
 
-  const sourceModel = new TextModel( `
-<0>123</0>
-` )
+//   const sourceModel = new TextModel( `
+// <0>123</0>
+// ` )
 
 // console.log( parse( `<0>12345</0>` ) )
 } )

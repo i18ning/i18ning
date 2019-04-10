@@ -14,6 +14,7 @@ describe( "long asynchronous specs", function() {
   sync( langFiles, {
     backup           : path.resolve( __dirname, ".backup" ),
     // enableBackup     : false,
-    enableTranslation: true
+    enableTranslation: false,
+    chromeHeadless   : false,
   } )
 } )
