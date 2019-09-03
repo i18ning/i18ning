@@ -46,14 +46,19 @@ export default function(
   } )
 
   chokidar
-    .watch( `${sourceFolder}/**/*${extension}`, {
-      ignored: new RegExp( backupName )
+    .watch( `${sourceFolder.replace( /\\/g, '/' )}/**/*${extension}`, {
+      ignored         : new RegExp( backupName ),
+      awaitWriteFinish: {
+        stabilityThreshold: 100,
+        pollInterval      : 100
+      },
     } )
     .on( "change", filePath => {
       const relativePath = path.relative( sourceFolder, filePath )
       const outputFilePath = path.resolve( targetFolder, relativePath )
       const sourceText = fs.readFileSync( filePath, { encoding: "utf8" } )
-      const outputText = parse( sourceText ).text
+      const info = parse( sourceText )
+      const outputText = info.text
       fs.outputFileSync( outputFilePath, outputText, { encoding: "utf8" } )
     } )
 }

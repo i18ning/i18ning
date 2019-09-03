@@ -21,5 +21,5 @@ describe( "long asynchronous specs", function() {
     backupName,
     syncConfig
   }
-  // i18nContents( source, target, config )
+  i18nContents( source, target, config )
 } )

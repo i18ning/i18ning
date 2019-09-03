@@ -118,7 +118,7 @@ export const PLACEHOLDER_TING_REGEXP_TEXT = "<>"
 // # variable
 export const YAML_LEFT = "---i18n"
 export const YAML_RIGHT = "---"
-export const YAML_REGEXP = new RegExp( NO_PRECEDING_BLACKSPLASH_REGEXP_TEXT + YAML_LEFT + `[\\s\\S]*?${YAML_RIGHT}\\n`,
+export const YAML_REGEXP = new RegExp( NO_PRECEDING_BLACKSPLASH_REGEXP_TEXT + YAML_LEFT + `[\\s\\S]*?${YAML_RIGHT}\\r\\n`,
   "m"
 )
 export const VAR_LEFT = "<@"

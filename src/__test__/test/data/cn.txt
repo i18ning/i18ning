@@ -1,5 +1,4 @@
----i18n
-enableTranslation: true
----
-
+test
+<1>Apple</1>
 <0>测试</0>
+<2>Test</2>

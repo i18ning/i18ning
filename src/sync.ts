@@ -33,6 +33,8 @@ export default function sync( langFiles: string[], config: Config = {} ) {
   if ( langFiles != null && langFiles.length === 0 ) {
     return
   }
+  const existingLangFiles = langFiles.filter( file => fs.existsSync( file ) )
+
 
   const currentConfig = {
     ...new Config(),
@@ -48,7 +50,12 @@ export default function sync( langFiles: string[], config: Config = {} ) {
     constructor( file: string, onChangeListener: any ) {
       this.file = file
       this.onChangeListener = onChangeListener
-      this.watcher = chokidar.watch( this.file ).on( "change", ( ...args ) => {
+      this.watcher = chokidar.watch( this.file, {
+        awaitWriteFinish: {
+          stabilityThreshold: 100,
+          pollInterval      : 100
+        },
+      } ).on( "change", ( ...args ) => {
         if ( !this.isPaused ) {
           this.onChangeListener( ...args )
         }
@@ -75,11 +82,10 @@ export default function sync( langFiles: string[], config: Config = {} ) {
   let isTranslating = false
 
   const { placeholder } = currentConfig
-  langFiles &&
-    langFiles.forEach( langFile => {
+  existingLangFiles &&
+    existingLangFiles.forEach( langFile => {
       const listener = () => {
         watchingItems.forEach( watchingItem => watchingItem.pause() )
-
         const referring = getLangTextInfo( langFile, {
           isRoot    : true,
           placeholder,
@@ -93,7 +99,7 @@ export default function sync( langFiles: string[], config: Config = {} ) {
         }
 
         // # update other lang files
-        langFiles
+        existingLangFiles
           .filter( file => file !== langFile && fs.existsSync( file ) )
           .forEach( file => {
             const prevFileText = fs.readFileSync( file, { encoding: "utf8" } )
@@ -116,12 +122,12 @@ export default function sync( langFiles: string[], config: Config = {} ) {
             } )
           } )
 
-        // # backup
-        const { enableBackup } = currentConfig
-        if ( enableBackup ) {
-          const { backup: backupDirectory, backupCount } = currentConfig
-          backup( langFiles, backupDirectory, backupCount )
-        }
+        // // # backup
+        // const { enableBackup } = currentConfig
+        // if ( enableBackup ) {
+        //   const { backup: backupDirectory, backupCount } = currentConfig
+        //   backup( existingLangFiles, backupDirectory, backupCount )
+        // }
 
         setTimeout( () => {
           watchingItems.forEach( watchingItem => watchingItem.resume() )

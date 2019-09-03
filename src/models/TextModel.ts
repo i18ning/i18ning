@@ -241,7 +241,8 @@ export default class TextModel {
   // # variable
   get yamlOuterText(): string {
     const { text } = this
-    const potentialOuterText = text.match( YAML_REGEXP ) ?
+    const matched = text.match( YAML_REGEXP )
+    const potentialOuterText = matched ?
       text.match( YAML_REGEXP )[ 0 ] :
       ""
     return potentialOuterText != null ? potentialOuterText : ""
@@ -375,7 +376,7 @@ function matchToGetPlaceholderSections( regexpText, targetText: string ) {
 function getYamlText( model: TextModel ) {
   const text = model.yamlOuterText
     .replace( new RegExp( `^${YAML_LEFT}` ), "" )
-    .replace( new RegExp( `${YAML_RIGHT}\n$`, "m" ), "" )
+    .replace( new RegExp( `${YAML_RIGHT}\r\n$`, "m" ), "" )
     .trim()
 
   const yamlLangTextModel = new TextModel(
